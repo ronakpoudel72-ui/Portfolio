@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // Polyfill / safeguard: ensure window.fetch can be assigned by iframe proxies and scripts without throwing "Cannot set property fetch of #<Window> which has only a getter"
+      (function () {
+        try {
+          var origDefineProperty = Object.defineProperty;
+          Object.defineProperty = function (obj, prop, descriptor) {
+            if (
+              (obj === window || (typeof Window !== 'undefined' && obj === Window.prototype) || (typeof globalThis !== 'undefined' && obj === globalThis)) &&
+              prop === 'fetch'
+            ) {
+              if (descriptor && descriptor.get && !descriptor.set) {
+                var customFetch = undefined;
+                var origGet = descriptor.get;
+                return origDefineProperty.call(Object, obj, prop, {
+                  get: function () {
+                    return customFetch !== undefined ? customFetch : origGet.call(this);
+                  },
+                  set: function (val) {
+                    customFetch = val;
+                  },
+                  configurable: true,
+                  enumerable: descriptor.enumerable !== undefined ? descriptor.enumerable : true
+                });
+              }
+            }
+            return origDefineProperty.apply(Object, arguments);
+          };
+
+          // Also handle existing descriptor if already defined with only a getter
+          var currentDesc = Object.getOwnPropertyDescriptor(window, 'fetch');
+          if (currentDesc && currentDesc.get && !currentDesc.set && currentDesc.configurable) {
+            var activeFetch = undefined;
+            var prevGet = currentDesc.get;
+            origDefineProperty.call(Object, window, 'fetch', {
+              get: function () {
+                return activeFetch !== undefined ? activeFetch : prevGet.call(this);
+              },
+              set: function (newVal) {
+                activeFetch = newVal;
+              },
+              configurable: true,
+              enumerable: currentDesc.enumerable !== undefined ? currentDesc.enumerable : true
+            });
+          }
+
+          // Error listener fallback
+          window.addEventListener('error', function (event) {
+            if (event && event.message && event.message.indexOf('fetch') !== -1 && event.message.indexOf('only a getter') !== -1) {
+              event.preventDefault();
+              if (typeof event.stopImmediatePropagation === 'function') {
+                event.stopImmediatePropagation();
+              }
+              return true;
+            }
+          }, true);
+        } catch (err) {
+          // Silent fallback
+        }
+      })();
+    </script>
+    <title>Ronak Poudel – IT Professional & QA Enthusiast | Portfolio</title>
+    <meta name="description" content="Personal portfolio of Ronak Poudel, an IT professional, QA enthusiast, and technology practitioner based in Nepal. Building practical technology solutions." />
+    <meta name="author" content="Ronak Poudel" />
+    <meta name="keywords" content="Ronak Poudel, IT Professional, Software Testing, QA Engineer Nepal, IoT, Python, Machine Learning, Web Development, Nepal Technology" />
+
+    <!-- OpenGraph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Ronak Poudel – IT Professional & QA Enthusiast | Portfolio" />
+    <meta property="og:description" content="Personal portfolio of Ronak Poudel, an IT professional, QA enthusiast, and technology practitioner based in Nepal." />
+    <meta property="og:site_name" content="Ronak Poudel Portfolio" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Ronak Poudel – IT Professional & QA Enthusiast | Portfolio" />
+    <meta name="twitter:description" content="Building practical technology solutions through software, testing, data, and problem-solving." />
+
+    <!-- JSON-LD Structured Data for Person Profile -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Ronak Poudel",
+        "jobTitle": "IT Professional | Moderator at Hora Technology",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Koteshwor",
+          "addressLocality": "Kathmandu",
+          "addressCountry": "Nepal"
+        },
+        "alumniOf": "Padmashree College",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Hora Technology"
+        },
+        "email": "mailto:ronakpoudel72@gmail.com",
+        "telephone": "+9779845349148",
+        "knowsAbout": [
+          "Platform Moderation",
+          "Content Writing",
+          "Software Testing",
+          "Quality Assurance",
+          "HTML",
+          "CSS",
+          "JavaScript",
+          "Python",
+          "IoT Development",
+          "Networking",
+          "Databases"
+        ]
+      }
+    </script>
+  </head>
+  <body class="bg-[#fafaf9] text-zinc-900 antialiased selection:bg-zinc-800 selection:text-zinc-50">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
